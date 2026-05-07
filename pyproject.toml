@@ -93,7 +93,8 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=markitdown --cov-report=term-missing"
+# removed --cov flags so a plain `pytest` run doesn't require pytest-cov
+addopts = "-v"
 
 [tool.coverage.run]
 source = ["src/markitdown"]
