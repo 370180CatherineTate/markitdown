@@ -62,6 +62,9 @@ class MarkItDown:
         style_map: Optional[str] = None,
         # Personal preference: strip trailing whitespace from converted output by default
         strip_trailing_whitespace: bool = True,
+        # Personally I find it useful to normalize multiple blank lines into one;
+        # keeps converted output cleaner without losing any real content.
+        collapse_blank_lines: bool = True,
     ):
         """
         Initialize MarkItDown.
@@ -72,11 +75,14 @@ class MarkItDown:
             style_map: Optional style map string for DOCX conversion.
             strip_trailing_whitespace: If True, strip trailing whitespace from each line
                 of the converted Markdown output. Defaults to True.
+            collapse_blank_lines: If True, collapse runs of more than one blank line into
+                a single blank line in the converted Markdown output. Defaults to True.
         """
         self._llm_client = llm_client
         self._llm_model = llm_model
         self._style_map = style_map
         self._strip_trailing_whitespace = strip_trailing_whitespace
+        self._collapse_blank_lines = collapse_blank_lines
         self._converters: list[tuple[type, dict]] = []
 
         # Register built-in converters
@@ -90,13 +96,4 @@ class MarkItDown:
             from markitdown.converters import PlainTextConverter
             self.register_converter(PlainTextConverter)
         except ImportError:
-            pass
-
-    def register_converter(self, converter_class: type, **kwargs) -> None:
-        """Register a custom document converter.
-
-        Args:
-            converter_class: A class that subclasses DocumentConverter.
-            **kwargs: Additional keyword arguments passed to the converter.
-        """
-        self._converters.append((converter_class, kwargs
+          
