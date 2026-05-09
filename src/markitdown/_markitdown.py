@@ -65,6 +65,9 @@ class MarkItDown:
         # Personally I find it useful to normalize multiple blank lines into one;
         # keeps converted output cleaner without losing any real content.
         collapse_blank_lines: bool = True,
+        # Added this myself -- when True, ensures the output always ends with
+        # exactly one newline. Makes it nicer to pipe output into other tools.
+        ensure_trailing_newline: bool = True,
     ):
         """
         Initialize MarkItDown.
@@ -77,23 +80,16 @@ class MarkItDown:
                 of the converted Markdown output. Defaults to True.
             collapse_blank_lines: If True, collapse runs of more than one blank line into
                 a single blank line in the converted Markdown output. Defaults to True.
+            ensure_trailing_newline: If True, ensure the converted output ends with exactly
+                one newline character. Useful when piping output to other tools. Defaults to True.
         """
         self._llm_client = llm_client
         self._llm_model = llm_model
         self._style_map = style_map
         self._strip_trailing_whitespace = strip_trailing_whitespace
         self._collapse_blank_lines = collapse_blank_lines
+        self._ensure_trailing_newline = ensure_trailing_newline
         self._converters: list[tuple[type, dict]] = []
 
         # Register built-in converters
-        self._register_default_converters()
-
-    def _register_default_converters(self) -> None:
-        """Register all built-in document converters."""
-        # Converters are registered in priority order (first match wins)
-        # Lazy imports to keep startup time low and avoid hard dependencies
-        try:
-            from markitdown.converters import PlainTextConverter
-            self.register_converter(PlainTextConverter)
-        except ImportError:
-          
+        self._register_default_converter
